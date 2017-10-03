@@ -64,8 +64,8 @@ def input_fn(mode, batch_size=1):
     assert mode == tf.estimator.ModeKeys.EVAL, 'invalid mode'
     tfrecords_file = os.path.join(FLAGS.data_dir, 'test.tfrecords')
 
-  assert os.path.exists(tfrecords_file), ('Run convert_to_records.py first to '
-  'convert the MNIST data to TFRecord file format.')
+  assert tf.gfile.Exists(tfrecords_file), ('Run convert_to_records.py first to '
+      'convert the MNIST data to TFRecord file format.')
 
   dataset = tf.contrib.data.TFRecordDataset([tfrecords_file])
 
@@ -92,6 +92,7 @@ def mnist_model(inputs, mode):
   if tf.test.is_built_with_cuda():
     # When running on GPU, transpose the data from channels_last (NHWC) to
     # channels_first (NCHW) to improve performance.
+    # See https://www.tensorflow.org/performance/performance_guide#data_formats
     data_format = 'channels_first'
     inputs = tf.transpose(inputs, [0, 3, 1, 2])
 
